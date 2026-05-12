@@ -1,3 +1,20 @@
 spring:
   application:
     name: profile-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/profile_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+server:
+  port: 8081
