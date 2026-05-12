@@ -1,0 +1,30 @@
+package com.worktime.profileservice.model.response;
+
+import java.time.LocalTime;
+import java.util.UUID;
+
+import com.worktime.profileservice.model.enums.EmploymentType;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class EmployeeProfileResponse {
+
+    private UUID id;
+
+    private String name;
+
+    private String surname;
+
+    private String specialization;
+
+    private EmploymentType employmentType;
+
+    private String timezone;
+
+    private LocalTime workStart;
+
+    private LocalTime workEnd;
+}
