@@ -3,6 +3,7 @@ package com.worktime.profileservice.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +14,17 @@ import com.worktime.profileservice.model.request.UpdateEmployeeProfileRequest;
 import com.worktime.profileservice.model.response.EmployeeProfileResponse;
 import com.worktime.profileservice.repository.EmployeeProfileRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmployeeProfileService {
 
-    private final EmployeeProfileRepository repository;
-    private final EmployeeProfileMapper mapper;
+    @Autowired
+    private EmployeeProfileRepository repository;
+
+    @Autowired
+    private EmployeeProfileMapper mapper;
 
     @Transactional(readOnly = true)
     public List <EmployeeProfileResponse> getAllEmployees(){
