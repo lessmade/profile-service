@@ -3,7 +3,6 @@ package com.worktime.profileservice.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,13 +18,14 @@ import com.worktime.profileservice.model.response.EmployeeProfileResponse;
 import com.worktime.profileservice.service.EmployeeProfileService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/employee")
+@RequestMapping("/api/v1/profiles")
+@RequiredArgsConstructor
 public class EmployeeProfileController {
 
-    @Autowired 
-    private EmployeeProfileService employeeProfileService;
+    private final EmployeeProfileService employeeProfileService;
 
     @GetMapping
     public List <EmployeeProfileResponse> getAllEmployees(){

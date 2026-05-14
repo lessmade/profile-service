@@ -14,16 +14,16 @@ import com.worktime.profileservice.model.request.UpdateEmployeeProfileRequest;
 import com.worktime.profileservice.model.response.EmployeeProfileResponse;
 import com.worktime.profileservice.repository.EmployeeProfileRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EmployeeProfileService {
 
-    @Autowired
     private EmployeeProfileRepository repository;
 
-    @Autowired
     private EmployeeProfileMapper mapper;
 
     @Transactional(readOnly = true)
