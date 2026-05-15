@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
+import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.enums.WorkDayExceptionType;
 
 import lombok.Builder;
@@ -28,6 +29,8 @@ public class WorkDayExceptionResponse {
     private LocalTime customEnd;
 
     private WorkDayExceptionType type;
+
+    private WorkDayExceptionStatus status;
 
     private String reason;
 }

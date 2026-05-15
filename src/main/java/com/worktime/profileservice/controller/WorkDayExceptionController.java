@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
+import com.worktime.profileservice.model.response.VacationResponse;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
 import com.worktime.profileservice.service.WorkDayExceptionService;
 
@@ -43,6 +45,18 @@ public class WorkDayExceptionController {
     @PostMapping
     public WorkDayExceptionResponse createException(@Valid @RequestBody WorkDayExceptionRequest request){
         return workDayExceptionService.createException(request);
+    }
+    @PatchMapping("/{exceptionId}/approve")
+    public WorkDayExceptionResponse approveException(@PathVariable UUID exceptionId){
+        return workDayExceptionService.approveException(exceptionId);
+    }
+    @PatchMapping("/{exceptionId}/reject")
+    public WorkDayExceptionResponse rejectException(@PathVariable UUID exceptionId){
+        return workDayExceptionService.rejectException(exceptionId);
+    }
+    @PatchMapping("/{exceptionId}/cancel")
+    public WorkDayExceptionResponse cancelException(@PathVariable UUID exceptionId){
+        return workDayExceptionService.cancelException(exceptionId);
     }
 
     @DeleteMapping("/{exceptionId}")

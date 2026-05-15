@@ -3,7 +3,7 @@ package com.worktime.profileservice.model.response;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.worktime.profileservice.model.enums.VacationStatus;
+import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 
 import lombok.Builder;
 import lombok.Data;
@@ -26,5 +26,5 @@ public class VacationResponse {
 
     private String reason;
 
-    private VacationStatus status;
+    private WorkDayExceptionStatus status;
 }
