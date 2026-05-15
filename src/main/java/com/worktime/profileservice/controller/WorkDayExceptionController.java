@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
-import com.worktime.profileservice.model.response.VacationResponse;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
 import com.worktime.profileservice.service.WorkDayExceptionService;
 
@@ -21,7 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/work-day-exceptions")
+@RequestMapping("/api/v1/profiles/work-day-exceptions")
 @RequiredArgsConstructor
 public class WorkDayExceptionController {
 
@@ -37,7 +36,7 @@ public class WorkDayExceptionController {
         return workDayExceptionService.getExceptionById(exceptionId);
     }
 
-    @GetMapping("/profile/{employeeId}")
+    @GetMapping("/{employeeId}")
     public List<WorkDayExceptionResponse> getEmployeeExceptions(@PathVariable UUID employeeId){
         return workDayExceptionService.getEmployeeExceptions(employeeId);
     }
