@@ -22,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmployeeProfileService {
 
-    private EmployeeProfileRepository repository;
+    private final EmployeeProfileRepository repository;
 
-    private EmployeeProfileMapper mapper;
+    private final EmployeeProfileMapper mapper;
 
     @Transactional(readOnly = true)
     public List <EmployeeProfileResponse> getAllEmployees(){
