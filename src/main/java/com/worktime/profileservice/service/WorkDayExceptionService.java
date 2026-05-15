@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.worktime.profileservice.entity.EmployeeProfile;
 import com.worktime.profileservice.entity.WorkDayExceptions;
 import com.worktime.profileservice.mapper.WorkDayExceptionMapper;
+import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
+import com.worktime.profileservice.model.response.VacationResponse;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
 import com.worktime.profileservice.repository.EmployeeProfileRepository;
 import com.worktime.profileservice.repository.WorkDayExceptionRepository;
@@ -62,9 +64,44 @@ public class WorkDayExceptionService {
         WorkDayExceptions workDayException = mapper.toEntity(request, employee);
         WorkDayExceptions savedException = repository.save(workDayException);
 
-        log.info("Исключения в рабочих днях добавлены для сотрудника {}",employee.getId());
+        log.info("Заявкав на исключения в рабочих днях создана для сотрудника {}",employee.getId());
 
         return mapper.toWorkDayExceptionView(savedException);
+    }
+
+    @Transactional
+    public WorkDayExceptionResponse approveException(UUID exceptionId){
+        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
+        
+        exception.setStatus(WorkDayExceptionStatus.APPROVED);
+
+        WorkDayExceptions updatedException = repository.save(exception);
+        log.info("Исключения рабочих дней {} подтверждены", updatedException.getId());
+
+        return mapper.toWorkDayExceptionView(updatedException);
+    }
+    @Transactional
+    public WorkDayExceptionResponse rejectException(UUID exceptionId){
+        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
+        
+        exception.setStatus(WorkDayExceptionStatus.REJECTED);
+
+        WorkDayExceptions updatedException = repository.save(exception);
+        log.info("Исключения рабочих дней {} отклонены", updatedException.getId());
+
+        return mapper.toWorkDayExceptionView(updatedException);
+    }
+
+    @Transactional
+    public WorkDayExceptionResponse cancelException(UUID exceptionId){
+        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
+        
+        exception.setStatus(WorkDayExceptionStatus.CANCELLED);
+
+        WorkDayExceptions updatedException = repository.save(exception);
+        log.info("Исключения рабочих дней {} отменены", updatedException.getId());
+
+        return mapper.toWorkDayExceptionView(updatedException);
     }
 
     @Transactional

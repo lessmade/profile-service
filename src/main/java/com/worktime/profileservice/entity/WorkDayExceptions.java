@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
+import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.enums.WorkDayExceptionType;
 
 import jakarta.persistence.Column;
@@ -50,5 +51,11 @@ public class WorkDayExceptions {
     @Column(nullable = false)
     private WorkDayExceptionType type;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WorkDayExceptionStatus status;
+
     private String reason;
+
+    //TODO rename to 
 }

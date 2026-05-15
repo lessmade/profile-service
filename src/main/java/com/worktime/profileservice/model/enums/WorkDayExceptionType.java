@@ -1,8 +1,8 @@
 package com.worktime.profileservice.model.enums;
 
 public enum WorkDayExceptionType {
-    DAY_OFF,  //Полный выходной
+    VACATION, // отпуск
     SICK_LEAVE,  // Больничный
-    OVERTIME,  // Переработка
-    CUSTOM_SCHEDULE // Кастомый график
+    PERSONAL_HOURS, //личные часы
+    DUTY_JOURNEY // командировка
 }

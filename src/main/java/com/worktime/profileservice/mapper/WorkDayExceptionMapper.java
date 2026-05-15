@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.worktime.profileservice.entity.EmployeeProfile;
 import com.worktime.profileservice.entity.WorkDayExceptions;
+import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
 
@@ -19,6 +20,8 @@ public class WorkDayExceptionMapper {
         workDayExceptions.setCustomStart(request.getCustomStart());
         workDayExceptions.setCustomEnd(request.getCustomEnd());
         workDayExceptions.setType(request.getType());
+        workDayExceptions.setStatus(WorkDayExceptionStatus.PLANNED);
+        
         workDayExceptions.setReason(request.getReason());
 
         return workDayExceptions;
@@ -34,6 +37,7 @@ public class WorkDayExceptionMapper {
                 .customStart(workDayExceptions.getCustomStart())
                 .customEnd(workDayExceptions.getCustomEnd())
                 .type(workDayExceptions.getType())
+                .status(workDayExceptions.getStatus())
                 .reason(workDayExceptions.getReason())
                 .build();
     }
