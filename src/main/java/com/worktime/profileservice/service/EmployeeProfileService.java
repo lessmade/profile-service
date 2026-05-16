@@ -28,10 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 public class EmployeeProfileService {
 
     private final EmployeeProfileRepository repository;
-
     private final KafkaProducerService kafkaProducerService;
-
     private final EmployeeProfileMapper mapper;
+    private static final String PROFILE_TOPIC = "profile.events";
 
     private EmployeeProfile getEmployeeOrThrow(UUID employeeId){
         return repository.findById(employeeId)
@@ -96,7 +95,7 @@ public class EmployeeProfileService {
                                 .workEnd(updatedProfile.getWorkEnd())
                                 .updatedAt(Instant.now())
                                 .build();
-    kafkaProducerService.sendProfileUpdatedEvent(event);
+    kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
 
     log.info("Обновленны данные сотрудника с id {}", updatedProfile.getId());
 
@@ -120,7 +119,7 @@ public class EmployeeProfileService {
                                     .workEnd(savedProfile.getWorkEnd())
                                     .createdAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendProfileCreatedEvent(event);
+        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
 
         log.info("Создан сотрудник с id {}", savedProfile.getId());
         
@@ -139,7 +138,8 @@ public class EmployeeProfileService {
                                     .surname(profile.getSurname())
                                     .deletedAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendProfileDeletedEvent(event);
+        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+        log.info("Удален сотрудник с id {}", profile.getId());
     }
 }
 

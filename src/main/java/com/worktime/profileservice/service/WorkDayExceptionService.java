@@ -33,6 +33,7 @@ public class WorkDayExceptionService {
     private final KafkaProducerService kafkaProducerService;
     private final EmployeeProfileRepository employeeRepository;
     private final WorkDayExceptionMapper mapper;
+    private static final String WORKDAY_EXCEPTION_TOPIC = "workday-exception.events";
 
     private WorkDayExceptions getExceptionOrThrow(UUID exceptionId) {
         return repository.findById(exceptionId)
@@ -81,7 +82,7 @@ public class WorkDayExceptionService {
                                                     .reason(savedException.getReason())
                                                     .createdAt(Instant.now())
                                                     .build();
-        kafkaProducerService.sendExceptionCreatedEvent(event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
 
         log.info("Заявка на исключения в рабочих днях создана для сотрудника {}",employee.getId());
 
@@ -108,9 +109,9 @@ public class WorkDayExceptionService {
                                                     .occurredAt(Instant.now())
                                                     .build();
 
-        kafkaProducerService.sendExceptionsStatusChangedEvent(event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
 
-        log.info("Исключение рабочих дней {} обновлено со статусом {}",updatedException.getId(),request);
+        log.info("Исключение рабочих дней {} обновлено со статусом {}",updatedException.getId(),request.getStatus());
 
         return mapper.toWorkDayExceptionView(updatedException);
     }
@@ -127,7 +128,7 @@ public class WorkDayExceptionService {
                                                 .date(exception.getDate())
                                                 .deletedAt(Instant.now())
                                                 .build();
-        kafkaProducerService.sendExceptionsDeletedEvent(event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
         log.info("Иcключение в рабочих днях {} удалено",exception.getId());
     }
 }
