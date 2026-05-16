@@ -1,7 +1,10 @@
 package com.worktime.profileservice.entity;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.worktime.profileservice.model.enums.EmploymentType;
 
@@ -50,5 +53,8 @@ public class EmployeeProfile {
 
     @Column(nullable = false)
     private LocalTime workEnd;
+
+    @UpdateTimestamp
+    private Instant updatedAt;
 
 }

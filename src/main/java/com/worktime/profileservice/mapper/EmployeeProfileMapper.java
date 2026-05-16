@@ -33,6 +33,7 @@ public class EmployeeProfileMapper {
                 .timezone(profile.getTimezone())
                 .workStart(profile.getWorkStart())
                 .workEnd(profile.getWorkEnd())
+                .updatedAt(profile.getUpdatedAt())
                 .build();
     }
     
