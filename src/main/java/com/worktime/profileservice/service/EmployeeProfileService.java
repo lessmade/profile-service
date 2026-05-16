@@ -1,18 +1,23 @@
 package com.worktime.profileservice.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.worktime.profileservice.entity.EmployeeProfile;
+import com.worktime.profileservice.event.ProfileCreatedEvent;
+import com.worktime.profileservice.event.ProfileDeletedEvent;
+import com.worktime.profileservice.event.ProfileUpdatedEvent;
 import com.worktime.profileservice.mapper.EmployeeProfileMapper;
 import com.worktime.profileservice.model.request.EmployeeProfileRequest;
 import com.worktime.profileservice.model.request.UpdateEmployeeProfileRequest;
 import com.worktime.profileservice.model.response.EmployeeProfileResponse;
 import com.worktime.profileservice.repository.EmployeeProfileRepository;
+
+import com.worktime.profileservice.kafka.KafkaProducerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +29,14 @@ public class EmployeeProfileService {
 
     private final EmployeeProfileRepository repository;
 
+    private final KafkaProducerService kafkaProducerService;
+
     private final EmployeeProfileMapper mapper;
+
+    private EmployeeProfile getEmployeeOrThrow(UUID employeeId){
+        return repository.findById(employeeId)
+            .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
+}
 
     @Transactional(readOnly = true)
     public List <EmployeeProfileResponse> getAllEmployees(){
@@ -36,16 +48,14 @@ public class EmployeeProfileService {
 
     @Transactional(readOnly = true)
     public EmployeeProfileResponse getEmployeeById(UUID employeeId){
-        EmployeeProfile profile = repository.findById(employeeId)
-                                        .orElseThrow(()-> new RuntimeException("Сотрудник не найден"));
+        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
 
         return mapper.toEmployeeProfileView(profile);
     }
 
     @Transactional
     public EmployeeProfileResponse updateEmployee(UUID employeeId, UpdateEmployeeProfileRequest request){
-        EmployeeProfile profile = repository.findById(employeeId)
-                                        .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
+        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
     if (request.getName() != null) {
         profile.setName(request.getName());
     }
@@ -75,6 +85,19 @@ public class EmployeeProfileService {
     }
     EmployeeProfile updatedProfile = repository.save(profile);
 
+    ProfileUpdatedEvent event = ProfileUpdatedEvent.builder()
+                                .employeeId(updatedProfile.getId())
+                                .name(updatedProfile.getName())
+                                .surname(updatedProfile.getSurname())
+                                .specialization(updatedProfile.getSpecialization())
+                                .employmentType(updatedProfile.getEmploymentType())
+                                .timezone(updatedProfile.getTimezone())
+                                .workStart(updatedProfile.getWorkStart())
+                                .workEnd(updatedProfile.getWorkEnd())
+                                .updatedAt(Instant.now())
+                                .build();
+    kafkaProducerService.sendProfileUpdatedEvent(event);
+
     log.info("Обновленны данные сотрудника с id {}", updatedProfile.getId());
 
     return mapper.toEmployeeProfileView(updatedProfile);
@@ -86,6 +109,19 @@ public class EmployeeProfileService {
 
         EmployeeProfile savedProfile = repository.save(profile);
 
+        ProfileCreatedEvent event = ProfileCreatedEvent.builder()
+                                    .employeeId(savedProfile.getId())
+                                    .name(savedProfile.getName())
+                                    .surname(savedProfile.getSurname())
+                                    .specialization(savedProfile.getSpecialization())
+                                    .employmentType(savedProfile.getEmploymentType())
+                                    .timezone(savedProfile.getTimezone())
+                                    .workStart(savedProfile.getWorkStart())
+                                    .workEnd(savedProfile.getWorkEnd())
+                                    .createdAt(Instant.now())
+                                    .build();
+        kafkaProducerService.sendProfileCreatedEvent(event);
+
         log.info("Создан сотрудник с id {}", savedProfile.getId());
         
         return mapper.toEmployeeProfileView(savedProfile);
@@ -93,13 +129,17 @@ public class EmployeeProfileService {
 
     @Transactional
     public void deleteEmployee(UUID employeeId){
-        if (!repository.existsById(employeeId)) {
-            throw new RuntimeException("Сотрудник не найден");
-        }
-        repository.deleteById(employeeId);
+        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
+
+        repository.delete(profile);
+
+        ProfileDeletedEvent event = ProfileDeletedEvent.builder()
+                                    .employeeId(profile.getId())
+                                    .name(profile.getName())
+                                    .surname(profile.getSurname())
+                                    .deletedAt(Instant.now())
+                                    .build();
+        kafkaProducerService.sendProfileDeletedEvent(event);
     }
 }
-
-
-// TODO cusom exeptions (ОБЯЗАТЕЛЬНО)
 

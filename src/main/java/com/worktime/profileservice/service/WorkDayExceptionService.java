@@ -1,5 +1,6 @@
 package com.worktime.profileservice.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,10 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.worktime.profileservice.entity.EmployeeProfile;
 import com.worktime.profileservice.entity.WorkDayExceptions;
+import com.worktime.profileservice.event.WorkDayExceptionCreatedEvent;
+import com.worktime.profileservice.event.WorkDayExceptionDeletedEvent;
+import com.worktime.profileservice.event.WorkDayExceptionStatusChangedEvent;
+import com.worktime.profileservice.kafka.KafkaProducerService;
 import com.worktime.profileservice.mapper.WorkDayExceptionMapper;
 import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
+import com.worktime.profileservice.model.request.UpdateExceptionStatusRequest;
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
-import com.worktime.profileservice.model.response.VacationResponse;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
 import com.worktime.profileservice.repository.EmployeeProfileRepository;
 import com.worktime.profileservice.repository.WorkDayExceptionRepository;
@@ -25,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WorkDayExceptionService {
     
     private final WorkDayExceptionRepository repository;
+    private final KafkaProducerService kafkaProducerService;
     private final EmployeeProfileRepository employeeRepository;
     private final WorkDayExceptionMapper mapper;
 
@@ -64,42 +70,47 @@ public class WorkDayExceptionService {
         WorkDayExceptions workDayException = mapper.toEntity(request, employee);
         WorkDayExceptions savedException = repository.save(workDayException);
 
-        log.info("Заявкав на исключения в рабочих днях создана для сотрудника {}",employee.getId());
+        WorkDayExceptionCreatedEvent event = WorkDayExceptionCreatedEvent.builder()
+                                                .exceptionId(savedException.getId())
+                                                    .employeeId(savedException.getEmployee().getId())
+                                                    .date(savedException.getDate())
+                                                    .customStart(savedException.getCustomStart())
+                                                    .customEnd(savedException.getCustomEnd())
+                                                    .type(savedException.getType())
+                                                    .status(savedException.getStatus())
+                                                    .reason(savedException.getReason())
+                                                    .createdAt(Instant.now())
+                                                    .build();
+        kafkaProducerService.sendExceptionCreatedEvent(event);
+
+        log.info("Заявка на исключения в рабочих днях создана для сотрудника {}",employee.getId());
 
         return mapper.toWorkDayExceptionView(savedException);
     }
 
     @Transactional
-    public WorkDayExceptionResponse approveException(UUID exceptionId){
+    public WorkDayExceptionResponse updateStatus(UUID exceptionId, UpdateExceptionStatusRequest request){
         WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
-        
-        exception.setStatus(WorkDayExceptionStatus.APPROVED);
+
+        exception.setStatus(request.getStatus());
 
         WorkDayExceptions updatedException = repository.save(exception);
-        log.info("Исключения рабочих дней {} подтверждены", updatedException.getId());
 
-        return mapper.toWorkDayExceptionView(updatedException);
-    }
-    @Transactional
-    public WorkDayExceptionResponse rejectException(UUID exceptionId){
-        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
-        
-        exception.setStatus(WorkDayExceptionStatus.REJECTED);
+        WorkDayExceptionStatusChangedEvent event = WorkDayExceptionStatusChangedEvent.builder()
+                                                    .exceptionId(updatedException.getId())
+                                                    .employeeId(updatedException.getEmployee().getId())
+                                                    .date(updatedException.getDate())
+                                                    .customStart(updatedException.getCustomStart())
+                                                    .customEnd(updatedException.getCustomEnd())
+                                                    .type(updatedException.getType())
+                                                    .status(updatedException.getStatus())
+                                                    .reason(updatedException.getReason())
+                                                    .occurredAt(Instant.now())
+                                                    .build();
 
-        WorkDayExceptions updatedException = repository.save(exception);
-        log.info("Исключения рабочих дней {} отклонены", updatedException.getId());
+        kafkaProducerService.sendExceptionsStatusChangedEvent(event);
 
-        return mapper.toWorkDayExceptionView(updatedException);
-    }
-
-    @Transactional
-    public WorkDayExceptionResponse cancelException(UUID exceptionId){
-        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
-        
-        exception.setStatus(WorkDayExceptionStatus.CANCELLED);
-
-        WorkDayExceptions updatedException = repository.save(exception);
-        log.info("Исключения рабочих дней {} отменены", updatedException.getId());
+        log.info("Исключение рабочих дней {} обновлено со статусом {}",updatedException.getId(),request);
 
         return mapper.toWorkDayExceptionView(updatedException);
     }
@@ -109,6 +120,14 @@ public class WorkDayExceptionService {
         WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
 
         repository.delete(exception);
+
+        WorkDayExceptionDeletedEvent event = WorkDayExceptionDeletedEvent.builder()
+                                                .employeeId(exception.getEmployee().getId())
+                                                .exceptionId(exception.getId())
+                                                .date(exception.getDate())
+                                                .deletedAt(Instant.now())
+                                                .build();
+        kafkaProducerService.sendExceptionsDeletedEvent(event);
         log.info("Иcключение в рабочих днях {} удалено",exception.getId());
     }
 }
