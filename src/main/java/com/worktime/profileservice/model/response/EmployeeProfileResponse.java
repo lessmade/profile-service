@@ -1,5 +1,6 @@
 package com.worktime.profileservice.model.response;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -27,4 +28,6 @@ public class EmployeeProfileResponse {
     private LocalTime workStart;
 
     private LocalTime workEnd;
+
+    private Instant updatedAt;
 }
