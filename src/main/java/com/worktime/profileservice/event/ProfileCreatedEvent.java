@@ -19,6 +19,8 @@ public class ProfileCreatedEvent {
 
     private String surname;
 
+    private String phoneNumber;
+
     private String specialization;
 
     private EmploymentType employmentType;

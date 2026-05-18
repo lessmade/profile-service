@@ -63,6 +63,10 @@ public class EmployeeProfileService {
         profile.setSurname(request.getSurname());
     }
 
+    if (request.getPhoneNumber() != null) {
+        profile.setPhoneNumber(request.getPhoneNumber());
+    }
+
     if (request.getSpecialization() != null) {
         profile.setSpecialization(request.getSpecialization());
     }
@@ -88,6 +92,7 @@ public class EmployeeProfileService {
                                 .employeeId(updatedProfile.getId())
                                 .name(updatedProfile.getName())
                                 .surname(updatedProfile.getSurname())
+                                .phoneNumber(updatedProfile.getPhoneNumber())
                                 .specialization(updatedProfile.getSpecialization())
                                 .employmentType(updatedProfile.getEmploymentType())
                                 .timezone(updatedProfile.getTimezone())
@@ -112,6 +117,7 @@ public class EmployeeProfileService {
                                     .employeeId(savedProfile.getId())
                                     .name(savedProfile.getName())
                                     .surname(savedProfile.getSurname())
+                                    .phoneNumber(savedProfile.getPhoneNumber())
                                     .specialization(savedProfile.getSpecialization())
                                     .employmentType(savedProfile.getEmploymentType())
                                     .timezone(savedProfile.getTimezone())
