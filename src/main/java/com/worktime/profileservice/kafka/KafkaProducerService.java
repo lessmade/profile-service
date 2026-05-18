@@ -17,6 +17,6 @@ public class KafkaProducerService {
     public void sendEvent(String topic, String key, Object event){
         kafkaTemplate.send(topic, key, event);
 
-        log.info("{} sent with key {} to topic {}", event.getClass().getSimpleName(), key, topic);
+        log.info("{} отправлено с ключом  {} в топик {}", event.getClass().getSimpleName(), key, topic);
     }
 }

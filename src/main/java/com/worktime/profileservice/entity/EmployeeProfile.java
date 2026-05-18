@@ -39,6 +39,9 @@ public class EmployeeProfile {
     private String surname;
 
     @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
     private String specialization;
 
     @Enumerated(EnumType.STRING)

@@ -14,6 +14,7 @@ public class EmployeeProfileMapper {
 
         profile.setName(request.getName());
         profile.setSurname(request.getSurname());
+        profile.setPhoneNumber(request.getPhoneNumber());
         profile.setSpecialization(request.getSpecialization());
         profile.setEmploymentType(request.getEmploymentType());
         profile.setTimezone(request.getTimezone());
@@ -28,6 +29,7 @@ public class EmployeeProfileMapper {
                 .id(profile.getId())
                 .name(profile.getName())
                 .surname(profile.getSurname())
+                .phoneNumber(profile.getPhoneNumber())
                 .specialization(profile.getSpecialization())
                 .employmentType(profile.getEmploymentType())
                 .timezone(profile.getTimezone())

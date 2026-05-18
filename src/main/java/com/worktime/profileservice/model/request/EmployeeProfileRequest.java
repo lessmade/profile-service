@@ -19,6 +19,9 @@ public class EmployeeProfileRequest {
     @NotBlank
     private String specialization;
 
+    @NotBlank
+    private String phoneNumber;
+
     @NotNull
     private EmploymentType employmentType;
 

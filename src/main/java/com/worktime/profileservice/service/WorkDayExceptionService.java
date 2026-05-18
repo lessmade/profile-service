@@ -14,7 +14,6 @@ import com.worktime.profileservice.event.WorkDayExceptionDeletedEvent;
 import com.worktime.profileservice.event.WorkDayExceptionStatusChangedEvent;
 import com.worktime.profileservice.kafka.KafkaProducerService;
 import com.worktime.profileservice.mapper.WorkDayExceptionMapper;
-import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.request.UpdateExceptionStatusRequest;
 import com.worktime.profileservice.model.request.WorkDayExceptionRequest;
 import com.worktime.profileservice.model.response.WorkDayExceptionResponse;
