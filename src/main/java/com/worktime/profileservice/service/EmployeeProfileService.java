@@ -35,8 +35,11 @@ public class EmployeeProfileService {
     private EmployeeProfile getEmployeeOrThrow(UUID employeeId){
         return repository.findById(employeeId)
             .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
-}
-
+    }
+    private EmployeeProfile getEmployeeByAuthIdOrThrow(Long authId) {
+        return repository.findByAuthId(authId)
+                .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
+    }
     @Transactional(readOnly = true)
     public List <EmployeeProfileResponse> getAllEmployees(){
         return repository.findAll()
@@ -46,15 +49,18 @@ public class EmployeeProfileService {
     }
 
     @Transactional(readOnly = true)
-    public EmployeeProfileResponse getEmployeeById(UUID employeeId){
-        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
-
+    public EmployeeProfileResponse getEmployee(Long authId) {
+        EmployeeProfile profile = getEmployeeByAuthIdOrThrow(authId);
         return mapper.toEmployeeProfileView(profile);
     }
 
-    @Transactional
-    public EmployeeProfileResponse updateEmployee(UUID employeeId, UpdateEmployeeProfileRequest request){
+    @Transactional(readOnly = true)
+    public EmployeeProfileResponse getEmployee(UUID employeeId){
         EmployeeProfile profile = getEmployeeOrThrow(employeeId);
+        return mapper.toEmployeeProfileView(profile);
+    }
+
+    private EmployeeProfileResponse updateEmployee(EmployeeProfile profile, UpdateEmployeeProfileRequest request){
     if (request.getName() != null) {
         profile.setName(request.getName());
     }
@@ -108,8 +114,21 @@ public class EmployeeProfileService {
     }
 
     @Transactional
-    public EmployeeProfileResponse createEmployee(EmployeeProfileRequest request){
+    public EmployeeProfileResponse updateEmployee(UUID employeeId, UpdateEmployeeProfileRequest request) {
+        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
+        return updateEmployee(profile, request);
+    }
+
+    @Transactional
+    public EmployeeProfileResponse updateEmployee(Long authId, UpdateEmployeeProfileRequest request) {
+        EmployeeProfile profile = getEmployeeByAuthIdOrThrow(authId);
+        return updateEmployee(profile, request);
+    }
+
+    @Transactional
+    public EmployeeProfileResponse createEmployee(Long authId, EmployeeProfileRequest request){
         EmployeeProfile profile = mapper.toEntity(request);
+        profile.setAuthId(authId);
 
         EmployeeProfile savedProfile = repository.save(profile);
 
