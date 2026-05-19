@@ -106,7 +106,7 @@ public class EmployeeProfileService {
                                 .workEnd(updatedProfile.getWorkEnd())
                                 .updatedAt(Instant.now())
                                 .build();
-    kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+    //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
 
     log.info("Обновленны данные сотрудника с id {}", updatedProfile.getId());
 
@@ -144,7 +144,7 @@ public class EmployeeProfileService {
                                     .workEnd(savedProfile.getWorkEnd())
                                     .createdAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+        //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
 
         log.info("Создан сотрудник с id {}", savedProfile.getId());
         
@@ -163,7 +163,7 @@ public class EmployeeProfileService {
                                     .surname(profile.getSurname())
                                     .deletedAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+        //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
         log.info("Удален сотрудник с id {}", profile.getId());
     }
 }
