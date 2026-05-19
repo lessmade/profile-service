@@ -33,6 +33,9 @@ public class EmployeeProfile {
     private UUID id;
 
     @Column(nullable = false)
+    private Long authId;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
