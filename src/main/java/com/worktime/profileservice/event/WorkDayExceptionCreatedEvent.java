@@ -20,11 +20,9 @@ public class WorkDayExceptionCreatedEvent {
 
     private Long userId;
 
-    private LocalDate date;
+    private LocalDateTime start;
 
-    private LocalTime customStart;
-
-    private LocalTime customEnd;
+    private LocalDateTime end;
 
     private WorkDayExceptionType type;
 

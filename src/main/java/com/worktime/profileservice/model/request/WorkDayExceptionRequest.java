@@ -1,6 +1,7 @@
 package com.worktime.profileservice.model.request;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -12,20 +13,15 @@ import lombok.Data;
 
 @Data
 public class WorkDayExceptionRequest {
-
     @NotNull
     private WorkDayExceptionType type;
 
     @NotNull
-    @FutureOrPresent
-    private LocalDate date;
-
-    private LocalTime customStart;
-
-    private LocalTime customEnd;
+    private LocalDateTime datetimeStart;
 
     @NotNull
-    private WorkDayExceptionType type;
+    private LocalDateTime datetimeEnd;
+
 
     private String reason;
 }

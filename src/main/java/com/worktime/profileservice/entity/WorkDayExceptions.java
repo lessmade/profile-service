@@ -39,12 +39,10 @@ public class WorkDayExceptions {
     private EmployeeProfile employee;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime startAt;
 
     @Column(nullable = false)
-    private LocalTime customStart;
-
-    private LocalTime customEnd;
+    private LocalDateTime endAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

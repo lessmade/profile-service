@@ -1,6 +1,7 @@
 package com.worktime.profileservice.model.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -18,14 +19,9 @@ public class WorkDayExceptionResponse {
 
     private Long userId;
 
+    private LocalDateTime datetimeStart;
 
-    private String employeeSurname;
-
-    private LocalDate date;
-
-    private LocalTime customStart;
-
-    private LocalTime customEnd;
+    private LocalDateTime datetimeEnd;
 
     private WorkDayExceptionType type;
 

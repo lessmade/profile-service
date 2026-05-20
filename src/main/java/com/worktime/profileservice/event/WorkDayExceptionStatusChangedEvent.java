@@ -2,6 +2,7 @@ package com.worktime.profileservice.event;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -19,11 +20,10 @@ public class WorkDayExceptionStatusChangedEvent {
 
     private Long userId;
 
-    private LocalDate date;
 
-    private LocalTime customStart;
+    private LocalDateTime start;
 
-    private LocalTime customEnd;
+    private LocalDateTime end;
 
     private WorkDayExceptionType type;
 
