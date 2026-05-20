@@ -41,6 +41,14 @@ public class EmployeeProfileService {
                 .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
     }
     @Transactional(readOnly = true)
+    public List<EmployeeProfileResponse> getByAuthIds(List<Long> authIds) {
+        return repository.findByAuthIdIn(authIds)
+                .stream()
+                .map(mapper::toEmployeeProfileView)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List <EmployeeProfileResponse> getAllEmployees(){
         return repository.findAll()
                 .stream()

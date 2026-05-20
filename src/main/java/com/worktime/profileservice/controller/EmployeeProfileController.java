@@ -31,8 +31,13 @@ public class EmployeeProfileController {
     }
 
     @GetMapping("/all")
-    public List <EmployeeProfileResponse> getAllEmployees(){
+    public List<EmployeeProfileResponse> getAllEmployees(){
         return employeeProfileService.getAllEmployees();
+    }
+
+    @GetMapping("/batch")
+    public List<EmployeeProfileResponse> getByAuthIds(@RequestParam List<Long> authIds) {
+        return employeeProfileService.getByAuthIds(authIds);
     }
 
     @PostMapping

@@ -1,5 +1,6 @@
 package com.worktime.profileservice.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,4 +10,5 @@ import com.worktime.profileservice.entity.EmployeeProfile;
 
 public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, UUID> {
     Optional<EmployeeProfile> findByAuthId(Long authId);
+    List<EmployeeProfile> findByAuthIdIn(List<Long> authIds);
 }
