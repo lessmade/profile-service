@@ -3,7 +3,7 @@ spring:
     name: profile-service
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5433/profile_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/profile_db}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
