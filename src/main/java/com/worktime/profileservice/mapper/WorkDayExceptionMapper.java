@@ -16,9 +16,8 @@ public class WorkDayExceptionMapper {
         WorkDayExceptions workDayExceptions = new WorkDayExceptions();
 
         workDayExceptions.setEmployee(employee);
-        workDayExceptions.setDate(request.getDate());
-        workDayExceptions.setCustomStart(request.getCustomStart());
-        workDayExceptions.setCustomEnd(request.getCustomEnd());
+        workDayExceptions.setStartAt(request.getDatetimeStart());
+        workDayExceptions.setEndAt(request.getDatetimeEnd());
         workDayExceptions.setType(request.getType());
         workDayExceptions.setStatus(WorkDayExceptionStatus.PLANNED);
         
@@ -30,12 +29,9 @@ public class WorkDayExceptionMapper {
     public WorkDayExceptionResponse toWorkDayExceptionView(WorkDayExceptions workDayExceptions){
         return WorkDayExceptionResponse.builder()
                 .id(workDayExceptions.getId())
-                .employeeName(workDayExceptions.getEmployee().getName())
-                .employeeSurname(workDayExceptions.getEmployee().getSurname())
-                .date(workDayExceptions.getDate())
-                .customStart(workDayExceptions.getCustomStart())
-                .customEnd(workDayExceptions.getCustomEnd())
                 .userId(workDayExceptions.getEmployee().getUserId())
+                .datetimeStart(workDayExceptions.getStartAt())
+                .datetimeEnd(workDayExceptions.getEndAt())
                 .type(workDayExceptions.getType())
                 .status(workDayExceptions.getStatus())
                 .reason(workDayExceptions.getReason())
