@@ -17,7 +17,7 @@ public class WorkDayExceptionStatusChangedEvent {
 
     private UUID exceptionId;
 
-    private UUID employeeId;
+    private Long userId;
 
     private LocalDate date;
 

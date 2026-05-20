@@ -26,7 +26,7 @@ public class EmployeeProfileMapper {
 
     public EmployeeProfileResponse toEmployeeProfileView(EmployeeProfile profile){
         return EmployeeProfileResponse.builder()
-                .id(profile.getId())
+                .userId(profile.getUserId())
                 .name(profile.getName())
                 .surname(profile.getSurname())
                 .phoneNumber(profile.getPhoneNumber())

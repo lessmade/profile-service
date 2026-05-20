@@ -1,7 +1,6 @@
 package com.worktime.profileservice.entity;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
@@ -36,7 +35,7 @@ public class WorkDayExceptions {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private EmployeeProfile employee;
 
     @Column(nullable = false)

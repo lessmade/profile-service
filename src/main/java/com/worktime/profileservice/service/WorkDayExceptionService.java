@@ -49,41 +49,34 @@ public class WorkDayExceptionService {
     }
 
     @Transactional(readOnly = true)
-    public WorkDayExceptionResponse getExceptionById(UUID exceptionId){
-        WorkDayExceptions exception = getExceptionOrThrow(exceptionId);
-
-        return mapper.toWorkDayExceptionView(exception);
-    }
-    @Transactional(readOnly = true)
-    public List<WorkDayExceptionResponse> getEmployeeExceptions(UUID employeeId){
-        return repository.findByEmployee_Id(employeeId)
+    public List<WorkDayExceptionResponse> getExceptions(Long userId){
+        return repository.findByEmployee_userId(userId)
                 .stream()
                 .map(mapper::toWorkDayExceptionView)
                 .toList();                                 
     }
 
     @Transactional
-    public WorkDayExceptionResponse createException(WorkDayExceptionRequest request){
-        EmployeeProfile employee = employeeRepository.findById(request.getEmployeeId())
+    public WorkDayExceptionResponse createException(Long userId, WorkDayExceptionRequest request){
+        EmployeeProfile employee = employeeRepository.findById(userId)
                                     .orElseThrow(()-> new RuntimeException("Сотрудник не найден"));
 
         WorkDayExceptions workDayException = mapper.toEntity(request, employee);
         WorkDayExceptions savedException = repository.save(workDayException);
 
         WorkDayExceptionCreatedEvent event = WorkDayExceptionCreatedEvent.builder()
-                                                .exceptionId(savedException.getId())
-                                                    .employeeId(savedException.getEmployee().getId())
-                                                    .date(savedException.getDate())
-                                                    .customStart(savedException.getCustomStart())
-                                                    .customEnd(savedException.getCustomEnd())
+                                                    .exceptionId(savedException.getId())
+                                                    .userId(savedException.getEmployee().getUserId())
+                                                    .start(savedException.getStartAt())
+                                                    .end(savedException.getEndAt())
                                                     .type(savedException.getType())
                                                     .status(savedException.getStatus())
                                                     .reason(savedException.getReason())
                                                     .createdAt(Instant.now())
                                                     .build();
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
 
-        log.info("Заявка на исключения в рабочих днях создана для сотрудника {}",employee.getId());
+        log.info("Заявка на исключения в рабочих днях создана для сотрудника {}",employee.getUserId());
 
         return mapper.toWorkDayExceptionView(savedException);
     }
@@ -98,17 +91,16 @@ public class WorkDayExceptionService {
 
         WorkDayExceptionStatusChangedEvent event = WorkDayExceptionStatusChangedEvent.builder()
                                                     .exceptionId(updatedException.getId())
-                                                    .employeeId(updatedException.getEmployee().getId())
-                                                    .date(updatedException.getDate())
-                                                    .customStart(updatedException.getCustomStart())
-                                                    .customEnd(updatedException.getCustomEnd())
+                                                    .userId(updatedException.getEmployee().getUserId())
+                                                    .start(updatedException.getStartAt())
+                                                    .end(updatedException.getEndAt())
                                                     .type(updatedException.getType())
                                                     .status(updatedException.getStatus())
                                                     .reason(updatedException.getReason())
                                                     .occurredAt(Instant.now())
                                                     .build();
 
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
 
         log.info("Исключение рабочих дней {} обновлено со статусом {}",updatedException.getId(),request.getStatus());
 
@@ -122,12 +114,13 @@ public class WorkDayExceptionService {
         repository.delete(exception);
 
         WorkDayExceptionDeletedEvent event = WorkDayExceptionDeletedEvent.builder()
-                                                .employeeId(exception.getEmployee().getId())
+                                                .userId(exception.getEmployee().getUserId())
                                                 .exceptionId(exception.getId())
-                                                .date(exception.getDate())
+                                                .start(exception.getStartAt())
+                                                .end(exception.getEndAt())
                                                 .deletedAt(Instant.now())
                                                 .build();
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getEmployeeId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
         log.info("Иcключение в рабочих днях {} удалено",exception.getId());
     }
 }

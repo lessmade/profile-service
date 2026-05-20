@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ProfileCreatedEvent {
-    private UUID employeeId;
+    private Long userId;
 
     private String name;
 

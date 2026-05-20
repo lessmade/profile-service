@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 public class ProfileDeletedEvent {
     
-    private UUID employeeId;
+    private Long userId;
 
     private String name;
 

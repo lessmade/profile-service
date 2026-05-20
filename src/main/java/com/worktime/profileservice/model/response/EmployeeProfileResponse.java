@@ -13,7 +13,7 @@ import lombok.Data;
 @Builder
 public class EmployeeProfileResponse {
 
-    private UUID id;
+    private Long userId;
 
     private String name;
 

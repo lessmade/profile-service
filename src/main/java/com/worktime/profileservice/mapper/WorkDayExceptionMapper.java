@@ -30,12 +30,12 @@ public class WorkDayExceptionMapper {
     public WorkDayExceptionResponse toWorkDayExceptionView(WorkDayExceptions workDayExceptions){
         return WorkDayExceptionResponse.builder()
                 .id(workDayExceptions.getId())
-                .employeeId(workDayExceptions.getEmployee().getId())
                 .employeeName(workDayExceptions.getEmployee().getName())
                 .employeeSurname(workDayExceptions.getEmployee().getSurname())
                 .date(workDayExceptions.getDate())
                 .customStart(workDayExceptions.getCustomStart())
                 .customEnd(workDayExceptions.getCustomEnd())
+                .userId(workDayExceptions.getEmployee().getUserId())
                 .type(workDayExceptions.getType())
                 .status(workDayExceptions.getStatus())
                 .reason(workDayExceptions.getReason())
