@@ -16,9 +16,8 @@ public class WorkDayExceptionResponse {
 
     private UUID id;
 
-    private UUID employeeId;
+    private Long userId;
 
-    private String employeeName;
 
     private String employeeSurname;
 

@@ -13,7 +13,7 @@ public class WorkDayExceptionDeletedEvent {
 
     private UUID exceptionId;
 
-    private UUID employeeId;
+    private Long userId;
 
     private LocalDate date;
 

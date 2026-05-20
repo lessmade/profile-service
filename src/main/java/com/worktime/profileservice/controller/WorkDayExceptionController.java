@@ -3,14 +3,7 @@ package com.worktime.profileservice.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.worktime.profileservice.model.enums.WorkDayExceptionStatus;
 import com.worktime.profileservice.model.request.UpdateExceptionStatusRequest;
@@ -28,32 +21,37 @@ public class WorkDayExceptionController {
 
     private final WorkDayExceptionService workDayExceptionService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<WorkDayExceptionResponse> getAllExceptions(){
         return workDayExceptionService.getAllExceptions();
     }
 
-    @GetMapping("/{exceptionId}")
-    public WorkDayExceptionResponse getExceptionById(@PathVariable UUID exceptionId){
-        return workDayExceptionService.getExceptionById(exceptionId);
+    @GetMapping
+    public List<WorkDayExceptionResponse> getExceptions(@RequestHeader("X-User-Id") Long userId){
+        return workDayExceptionService.getExceptions(userId);
     }
 
-    @GetMapping("/{employeeId}")
-    public List<WorkDayExceptionResponse> getEmployeeExceptions(@PathVariable UUID employeeId){
-        return workDayExceptionService.getEmployeeExceptions(employeeId);
+    @GetMapping("/{userId}")
+    public List<WorkDayExceptionResponse> getEmployeeExceptions(@PathVariable Long userId){
+        return workDayExceptionService.getExceptions(userId);
     }
 
     @PostMapping
-    public WorkDayExceptionResponse createException(@Valid @RequestBody WorkDayExceptionRequest request){
-        return workDayExceptionService.createException(request);
+    public WorkDayExceptionResponse createException(@RequestHeader("X-User-Id") Long userId,
+                                                    @Valid @RequestBody WorkDayExceptionRequest request) {
+        return workDayExceptionService.createException(userId, request);
     }
+
+    // TODO: check if user is admin or exception belongs to user
     @PatchMapping("/{exceptionId}/status")
-    public WorkDayExceptionResponse updateExceptionStatus(@PathVariable UUID exceptionId, @RequestBody UpdateExceptionStatusRequest request){
+    public WorkDayExceptionResponse updateExceptionStatus(@PathVariable UUID exceptionId,
+                                                          @RequestBody UpdateExceptionStatusRequest request){
         return workDayExceptionService.updateStatus(exceptionId, request);
     }
 
     @DeleteMapping("/{exceptionId}")
-    public void deleteException(@PathVariable UUID exceptionId){
+    public void deleteException(@RequestHeader("X-User-Id") Long userId,
+                                @PathVariable UUID exceptionId){
         workDayExceptionService.deleteException(exceptionId);
     }
 }

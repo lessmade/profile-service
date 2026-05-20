@@ -29,11 +29,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EmployeeProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
     @Column(nullable = false)
-    private Long authId;
+    private Long userId;
 
     @Column(nullable = false)
     private String name;

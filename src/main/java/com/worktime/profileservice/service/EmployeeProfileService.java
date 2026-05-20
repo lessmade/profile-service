@@ -2,7 +2,6 @@ package com.worktime.profileservice.service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +31,8 @@ public class EmployeeProfileService {
     private final EmployeeProfileMapper mapper;
     private static final String PROFILE_TOPIC = "profile.events";
 
-    private EmployeeProfile getEmployeeOrThrow(UUID employeeId){
-        return repository.findById(employeeId)
-            .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
-    }
-    private EmployeeProfile getEmployeeByAuthIdOrThrow(Long authId) {
-        return repository.findByAuthId(authId)
+    private EmployeeProfile getProfileByIdOrThrow(Long userId) {
+        return repository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
     }
     @Transactional(readOnly = true)
@@ -57,18 +52,12 @@ public class EmployeeProfileService {
     }
 
     @Transactional(readOnly = true)
-    public EmployeeProfileResponse getEmployee(Long authId) {
-        EmployeeProfile profile = getEmployeeByAuthIdOrThrow(authId);
+    public EmployeeProfileResponse getProfile(Long userId) {
+        EmployeeProfile profile = getProfileByIdOrThrow(userId);
         return mapper.toEmployeeProfileView(profile);
     }
 
-    @Transactional(readOnly = true)
-    public EmployeeProfileResponse getEmployee(UUID employeeId){
-        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
-        return mapper.toEmployeeProfileView(profile);
-    }
-
-    private EmployeeProfileResponse updateEmployee(EmployeeProfile profile, UpdateEmployeeProfileRequest request){
+    private EmployeeProfileResponse updateProfile(EmployeeProfile profile, UpdateEmployeeProfileRequest request){
     if (request.getName() != null) {
         profile.setName(request.getName());
     }
@@ -103,7 +92,7 @@ public class EmployeeProfileService {
     EmployeeProfile updatedProfile = repository.save(profile);
 
     ProfileUpdatedEvent event = ProfileUpdatedEvent.builder()
-                                .employeeId(updatedProfile.getId())
+                                .userId(updatedProfile.getUserId())
                                 .name(updatedProfile.getName())
                                 .surname(updatedProfile.getSurname())
                                 .phoneNumber(updatedProfile.getPhoneNumber())
@@ -114,34 +103,28 @@ public class EmployeeProfileService {
                                 .workEnd(updatedProfile.getWorkEnd())
                                 .updatedAt(Instant.now())
                                 .build();
-    //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+    kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
 
-    log.info("Обновленны данные сотрудника с id {}", updatedProfile.getId());
+    log.info("Обновленны данные сотрудника с id {}", updatedProfile.getUserId());
 
     return mapper.toEmployeeProfileView(updatedProfile);
     }
 
     @Transactional
-    public EmployeeProfileResponse updateEmployee(UUID employeeId, UpdateEmployeeProfileRequest request) {
-        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
-        return updateEmployee(profile, request);
+    public EmployeeProfileResponse updateProfile(Long userId, UpdateEmployeeProfileRequest request) {
+        EmployeeProfile profile = getProfileByIdOrThrow(userId);
+        return updateProfile(profile, request);
     }
 
     @Transactional
-    public EmployeeProfileResponse updateEmployee(Long authId, UpdateEmployeeProfileRequest request) {
-        EmployeeProfile profile = getEmployeeByAuthIdOrThrow(authId);
-        return updateEmployee(profile, request);
-    }
-
-    @Transactional
-    public EmployeeProfileResponse createEmployee(Long authId, EmployeeProfileRequest request){
+    public EmployeeProfileResponse createProfile(Long userId, EmployeeProfileRequest request){
         EmployeeProfile profile = mapper.toEntity(request);
-        profile.setAuthId(authId);
+        profile.setUserId(userId);
 
         EmployeeProfile savedProfile = repository.save(profile);
 
         ProfileCreatedEvent event = ProfileCreatedEvent.builder()
-                                    .employeeId(savedProfile.getId())
+                                    .userId(savedProfile.getUserId())
                                     .name(savedProfile.getName())
                                     .surname(savedProfile.getSurname())
                                     .phoneNumber(savedProfile.getPhoneNumber())
@@ -152,27 +135,27 @@ public class EmployeeProfileService {
                                     .workEnd(savedProfile.getWorkEnd())
                                     .createdAt(Instant.now())
                                     .build();
-        //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
+        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
 
-        log.info("Создан сотрудник с id {}", savedProfile.getId());
+        log.info("Создан сотрудник с id {}", savedProfile.getUserId());
         
         return mapper.toEmployeeProfileView(savedProfile);
     }
 
     @Transactional
-    public void deleteEmployee(UUID employeeId){
-        EmployeeProfile profile = getEmployeeOrThrow(employeeId);
+    public void deleteProfile(Long userId){
+        EmployeeProfile profile = getProfileByIdOrThrow(userId);
 
         repository.delete(profile);
 
         ProfileDeletedEvent event = ProfileDeletedEvent.builder()
-                                    .employeeId(profile.getId())
+                                    .userId(profile.getUserId())
                                     .name(profile.getName())
                                     .surname(profile.getSurname())
                                     .deletedAt(Instant.now())
                                     .build();
-        //kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getEmployeeId().toString(), event);
-        log.info("Удален сотрудник с id {}", profile.getId());
+        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
+        log.info("Удален сотрудник с id {}", profile.getUserId());
     }
 }
 

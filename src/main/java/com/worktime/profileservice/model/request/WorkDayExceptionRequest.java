@@ -14,7 +14,7 @@ import lombok.Data;
 public class WorkDayExceptionRequest {
 
     @NotNull
-    private UUID employeeId;
+    private WorkDayExceptionType type;
 
     @NotNull
     @FutureOrPresent

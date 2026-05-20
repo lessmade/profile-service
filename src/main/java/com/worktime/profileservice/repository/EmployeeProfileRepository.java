@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.worktime.profileservice.entity.EmployeeProfile;
 
-public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, UUID> {
-    Optional<EmployeeProfile> findByAuthId(Long authId);
-    List<EmployeeProfile> findByAuthIdIn(List<Long> authIds);
+public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, Long> {
 }

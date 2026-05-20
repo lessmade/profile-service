@@ -21,17 +21,17 @@ public class EmployeeProfileController {
     private final EmployeeProfileService employeeProfileService;
 
     @GetMapping
-    public EmployeeProfileResponse getEmployee(@RequestHeader("X-User-Id") Long authId) {
-        return employeeProfileService.getEmployee(authId);
+    public EmployeeProfileResponse getProfile(@RequestHeader("X-User-Id") Long userId) {
+        return employeeProfileService.getProfile(userId);
     }
 
-    @GetMapping("/{employeeId}")
-    public EmployeeProfileResponse getEmployee(@PathVariable UUID employeeId){
-        return employeeProfileService.getEmployee(employeeId);
+    @GetMapping("/{userId}")
+    public EmployeeProfileResponse getEmployeeProfile(@PathVariable Long userId){
+        return employeeProfileService.getProfile(userId);
     }
 
     @GetMapping("/all")
-    public List<EmployeeProfileResponse> getAllEmployees(){
+    public List <EmployeeProfileResponse> getAllEmployeeProfiles(){
         return employeeProfileService.getAllEmployees();
     }
 
@@ -41,25 +41,25 @@ public class EmployeeProfileController {
     }
 
     @PostMapping
-    public EmployeeProfileResponse createEmployee(@RequestHeader("X-User-Id") Long authId,
+    public EmployeeProfileResponse createProfile(@RequestHeader("X-User-Id") Long userId,
                                                   @Valid @RequestBody EmployeeProfileRequest request){
-        return employeeProfileService.createEmployee(authId, request);
+        return employeeProfileService.createProfile(userId, request);
     }
   
-    @PatchMapping("/{employeeId}")
-    public EmployeeProfileResponse updateEmployee(@PathVariable UUID employeeId,
+    @PatchMapping("/{userId}")
+    public EmployeeProfileResponse updateEmployeeProfile(@PathVariable Long userId,
                                                   @RequestBody UpdateEmployeeProfileRequest request){
-        return employeeProfileService.updateEmployee(employeeId, request);
+        return employeeProfileService.updateProfile(userId, request);
     }
 
-    @PatchMapping()
-    public EmployeeProfileResponse updateEmployee(@RequestHeader("X-User-Id") Long authId,
+    @PatchMapping
+    public EmployeeProfileResponse updateProfile(@RequestHeader("X-User-Id") Long userId,
                                                   @RequestBody UpdateEmployeeProfileRequest request) {
-        return employeeProfileService.updateEmployee(authId, request);
+        return employeeProfileService.updateProfile(userId, request);
     }
 
-    @DeleteMapping("/{employeeId}")
-    public void deleteEmployee(@PathVariable UUID employeeId){
-        employeeProfileService.deleteEmployee(employeeId);
+    @DeleteMapping("/{userId}")
+    public void deleteEmployeeProfile(@PathVariable Long userId){
+        employeeProfileService.deleteProfile(userId);
     }
 }
