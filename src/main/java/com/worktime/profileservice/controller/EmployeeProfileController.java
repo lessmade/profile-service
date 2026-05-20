@@ -35,6 +35,11 @@ public class EmployeeProfileController {
         return employeeProfileService.getAllEmployees();
     }
 
+    @GetMapping("/batch")
+    public List<EmployeeProfileResponse> getByAuthIds(@RequestParam List<Long> authIds) {
+        return employeeProfileService.getByAuthIds(authIds);
+    }
+
     @PostMapping
     public EmployeeProfileResponse createProfile(@RequestHeader("X-User-Id") Long userId,
                                                   @Valid @RequestBody EmployeeProfileRequest request){

@@ -15,6 +15,8 @@ public class EmployeeProfileResponse {
 
     private Long userId;
 
+    private Long authId;
+
     private String name;
 
     private String surname;
