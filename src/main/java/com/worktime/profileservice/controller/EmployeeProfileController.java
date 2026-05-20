@@ -36,8 +36,8 @@ public class EmployeeProfileController {
     }
 
     @GetMapping("/batch")
-    public List<EmployeeProfileResponse> getByAuthIds(@RequestParam List<Long> authIds) {
-        return employeeProfileService.getByAuthIds(authIds);
+    public List<EmployeeProfileResponse> getByAuthIds(@RequestParam List<Long> userIds) {
+        return employeeProfileService.getByAuthIds(userIds);
     }
 
     @PostMapping
