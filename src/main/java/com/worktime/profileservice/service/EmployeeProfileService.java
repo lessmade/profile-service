@@ -29,7 +29,10 @@ public class EmployeeProfileService {
     private final EmployeeProfileRepository repository;
     private final KafkaProducerService kafkaProducerService;
     private final EmployeeProfileMapper mapper;
-    private static final String PROFILE_TOPIC = "profile.events";
+    
+    private static final String PROFILE_CREATED_TOPIC = "profile.created";
+    private static final String PROFILE_UPDATED_TOPIC = "profile.updated";
+    private static final String PROFILE_DELETED_TOPIC = "profile.deleted";
 
     private EmployeeProfile getProfileByIdOrThrow(Long userId) {
         return repository.findById(userId)
@@ -103,7 +106,7 @@ public class EmployeeProfileService {
                                 .workEnd(updatedProfile.getWorkEnd())
                                 .updatedAt(Instant.now())
                                 .build();
-    kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
+    kafkaProducerService.sendEvent(PROFILE_UPDATED_TOPIC, event.getUserId().toString(), event);
 
     log.info("Обновленны данные сотрудника с id {}", updatedProfile.getUserId());
 
@@ -135,7 +138,7 @@ public class EmployeeProfileService {
                                     .workEnd(savedProfile.getWorkEnd())
                                     .createdAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
+        kafkaProducerService.sendEvent(PROFILE_CREATED_TOPIC, event.getUserId().toString(), event);
 
         log.info("Создан сотрудник с id {}", savedProfile.getUserId());
         
@@ -154,7 +157,7 @@ public class EmployeeProfileService {
                                     .surname(profile.getSurname())
                                     .deletedAt(Instant.now())
                                     .build();
-        kafkaProducerService.sendEvent(PROFILE_TOPIC, event.getUserId().toString(), event);
+        kafkaProducerService.sendEvent(PROFILE_DELETED_TOPIC, event.getUserId().toString(), event);
         log.info("Удален сотрудник с id {}", profile.getUserId());
     }
 }
