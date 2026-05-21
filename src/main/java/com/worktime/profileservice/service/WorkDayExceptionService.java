@@ -32,7 +32,12 @@ public class WorkDayExceptionService {
     private final KafkaProducerService kafkaProducerService;
     private final EmployeeProfileRepository employeeRepository;
     private final WorkDayExceptionMapper mapper;
-    private static final String WORKDAY_EXCEPTION_TOPIC = "workday-exception.events";
+
+    private static final String WORKDAY_EXCEPTION_CREATED_TOPIC = "workday-exception.created";
+
+    private static final String WORKDAY_EXCEPTION_STATUS_CHANGED_TOPIC = "workday-exception.status-changed";
+
+    private static final String WORKDAY_EXCEPTION_DELETED_TOPIC = "workday-exception.deleted";
 
     private WorkDayExceptions getExceptionOrThrow(UUID exceptionId) {
         return repository.findById(exceptionId)
@@ -74,7 +79,7 @@ public class WorkDayExceptionService {
                                                     .reason(savedException.getReason())
                                                     .createdAt(Instant.now())
                                                     .build();
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_CREATED_TOPIC, event.getUserId().toString(), event);
 
         log.info("Заявка на исключения в рабочих днях создана для сотрудника {}",employee.getUserId());
 
@@ -100,7 +105,7 @@ public class WorkDayExceptionService {
                                                     .occurredAt(Instant.now())
                                                     .build();
 
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_STATUS_CHANGED_TOPIC, event.getUserId().toString(), event);
 
         log.info("Исключение рабочих дней {} обновлено со статусом {}",updatedException.getId(),request.getStatus());
 
@@ -120,7 +125,7 @@ public class WorkDayExceptionService {
                                                 .end(exception.getEndAt())
                                                 .deletedAt(Instant.now())
                                                 .build();
-        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_TOPIC, event.getUserId().toString(), event);
+        kafkaProducerService.sendEvent(WORKDAY_EXCEPTION_DELETED_TOPIC, event.getUserId().toString(), event);
         log.info("Иcключение в рабочих днях {} удалено",exception.getId());
     }
 }
