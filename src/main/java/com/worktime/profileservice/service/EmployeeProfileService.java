@@ -10,6 +10,7 @@ import com.worktime.profileservice.entity.EmployeeProfile;
 import com.worktime.profileservice.event.ProfileCreatedEvent;
 import com.worktime.profileservice.event.ProfileDeletedEvent;
 import com.worktime.profileservice.event.ProfileUpdatedEvent;
+import com.worktime.profileservice.exception.ProfileNotFoundException;
 import com.worktime.profileservice.mapper.EmployeeProfileMapper;
 import com.worktime.profileservice.model.request.EmployeeProfileRequest;
 import com.worktime.profileservice.model.request.UpdateEmployeeProfileRequest;
@@ -36,7 +37,7 @@ public class EmployeeProfileService {
 
     private EmployeeProfile getProfileByIdOrThrow(Long userId) {
         return repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Сотрудник не найден"));
+                .orElseThrow(() -> new ProfileNotFoundException(userId));
     }
     @Transactional(readOnly = true)
     public List<EmployeeProfileResponse> getByAuthIds(List<Long> userIds) {
@@ -161,4 +162,3 @@ public class EmployeeProfileService {
         log.info("Удален сотрудник с id {}", profile.getUserId());
     }
 }
-
